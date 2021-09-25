@@ -10,8 +10,8 @@ private:
 	double m_distance; // from the point of 
 					   // touch to intersection with Ox	
 
-	bool beloningOfRange(const double phi_1, const double phi_2) const; // for some functions
-	bool beloningOfRange(const double phi) const;
+	bool beloningOfRange(const double phi_1, const double phi_2) const noexcept; // for some functions
+	bool beloningOfRange(const double phi) const noexcept;
 public:
 	explicit Tractriss(double distance = 0);
 
@@ -23,12 +23,12 @@ public:
 	~Tractriss() = default;
 
 	double getRadius(const double phi) const;
-	CodeErrors getCoordinates(const double phi, Point& outPoint) const;
-	inline double getDistance() const { return m_distance; }
-	inline void setDistance(const double newDistance) { m_distance = (newDistance > 0) ? newDistance : m_distance; }
-	double getArea() const;
-	double getVolume() const;
-	double getSurface() const;
+	Point getCoordinates(const double phi) const;
+	inline double getDistance() const noexcept { return m_distance; }
+	void setDistance(const double newDistance);
+	double getArea() const noexcept;
+	double getVolume() const noexcept;
+	double getSurface() const noexcept;
 	double getDougieLength(const double phi_1, const double phi_2) const; // in radians
 
 

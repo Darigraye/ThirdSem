@@ -7,7 +7,6 @@
 #include "Tractriss.h"
 #include "Errors.h"
 #include "Point.h"
-#include "Errors.h"
 
 using std::pow;
 using std::log;
@@ -16,7 +15,7 @@ using std::tan;
 
 constexpr double pi = 3.141592653589793;
 
-bool Tractriss::beloningOfRange(const double phi_1, const double phi_2) const {
+bool Tractriss::beloningOfRange(const double phi_1, const double phi_2) const noexcept {
 	if (phi_1 >= pi || phi_2 >= pi || phi_1 <= 0 || phi_2 <= 0 || phi_2 < phi_1) {
 		return false;
 	}
@@ -24,7 +23,7 @@ bool Tractriss::beloningOfRange(const double phi_1, const double phi_2) const {
 	return true;
 }
 
-bool Tractriss::beloningOfRange(const double phi) const{
+bool Tractriss::beloningOfRange(const double phi) const noexcept {
 	if (phi <= 0 || phi >= pi) {
 		return false;
 	}
@@ -34,26 +33,34 @@ bool Tractriss::beloningOfRange(const double phi) const{
 
 Tractriss::Tractriss(double distance) : m_distance{ distance }
 {
-	if (distance < 0) {		// incorrect value for distances
-		m_distance = 0;
+	if (distance < 0) {
+		throw Exception("Incorrect distance! Value < 0");
 	}
 }
 
-double Tractriss::getArea() const {
+void Tractriss::setDistance(double value) {
+	if (value < 0) {
+		throw Exception("Incorrect distance! Value < 0");
+	}
+
+	m_distance = value;
+}
+
+double Tractriss::getArea() const noexcept {
 	return (pow(m_distance, 2) * pi) / 2;
 }
 
-double Tractriss::getVolume() const {
+double Tractriss::getVolume() const noexcept {
 	return 2 * (pi * pow(m_distance, 3) / 3);
 }
 
-double Tractriss::getSurface() const {
+double Tractriss::getSurface() const noexcept {
 	return 4 * pi * pow(m_distance, 2);
 }
 
 double Tractriss::getDougieLength(const double phi_1, const double phi_2) const {
 	if (beloningOfRange(phi_1, phi_2) == false) { 
-		return -1;
+		throw Exception("Angles out of range");
 	}
 
 	return m_distance * abs(log(abs(sin(phi_1) / sin(phi_2))));
@@ -62,21 +69,23 @@ double Tractriss::getDougieLength(const double phi_1, const double phi_2) const 
 
 double Tractriss::getRadius(const double phi) const {
 	if (beloningOfRange(phi) == false) {
-		return -1;
+		throw Exception("Angle out of range");
 	}
 
 	return m_distance / abs(tan(phi));
 }
 
-CodeErrors Tractriss::getCoordinates(const double phi, Point& outPoint) const {
+Point Tractriss::getCoordinates(const double phi) const {
 	if (beloningOfRange(phi) == false) {
-		return CodeErrors::USER_FAIL;
+		throw Exception("Angle out of range");
 	}
 
-	outPoint.x = m_distance * (log(tan(phi / 2)) + cos(phi));
-	outPoint.y = m_distance * abs(sin(phi)); // we use abs because y must be only positive
+	Point point;
 
-	return CodeErrors::SUCCESS;
+	point.x = m_distance * (log(tan(phi / 2)) + cos(phi));
+	point.y = m_distance * abs(sin(phi)); // we use abs because y must be only positive;
+
+	return point;
 }
 
 std::ostream& operator<< (std::ostream& out, const Tractriss& tractriss) {

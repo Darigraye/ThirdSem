@@ -11,10 +11,13 @@ void Interface::menu() {
 
 	try {
 		do {
+			cout << '\n';
+
 			for (auto& current : m_messages) {
 				cout << current << endl;
 			}
 
+			cout << '\n';
 			getValue(mode);
 
 			if (mode < minSizeMenu || mode > maxSizeMenu) {
@@ -43,20 +46,20 @@ void Interface::menu() {
 
 				break;
 			case 2:
-				cout << "Distance = " << m_tractriss.getDistance() << endl;
+				cout << "Distance = " << m_tractriss.getDistance() << '\n' << endl;
 				break;
 			case 3:
-				cout << "Area = " << m_tractriss.getArea() << endl;
+				cout << "Area = " << m_tractriss.getArea() << '\n' << endl;
 				break;
 			case 4:
-				cout << "Volume = " << m_tractriss.getVolume() << endl;
+				cout << "Volume = " << m_tractriss.getVolume() << '\n' << endl;
 				break;
 			case 5:
-				cout << "Area of surface = " << m_tractriss.getSurface() << endl;
+				cout << "Area of surface = " << m_tractriss.getSurface()  << '\n' << endl;
 				break;
 			case 6:
 				double phi_1,
-					phi_2;
+					   phi_2;
 				cout << "Input degrees of the corners (in radians): ";
 
 				getValue(phi_1);
@@ -88,19 +91,15 @@ void Interface::menu() {
 				break;
 			case 8:
 				double alpha;
-				Point point; // point whose coordinates we want to get
 
 				cout << "Input degree of the corner (in radians): ";
 
 				getValue(alpha);
 
-				if (m_tractriss.getCoordinates(alpha, point) == CodeErrors::USER_FAIL) {
-					cout << "Corner doesn't fall into range" << endl;
-				}
-				else {
-					cout << "x = " << point.x << " or x = " << -point.x <<
-						"; y = " << point.y << endl;
-				}
+				Point point = m_tractriss.getCoordinates(alpha);
+
+				cout << "x = " << point.x << " or " << -point.x <<
+					"y = " << point.y << endl;
 				break;
 			case 9:
 				cout << m_tractriss << endl;
@@ -111,5 +110,8 @@ void Interface::menu() {
 	catch (const std::istream::failure& exc) {
 		std::cout << exc.what() << std::endl;
 		return;
+	}
+	catch (const Exception& exc) {
+		cout << exc.what() << endl;
 	}
 }
