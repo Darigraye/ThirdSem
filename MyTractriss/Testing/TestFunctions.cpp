@@ -1,9 +1,8 @@
 #include <random>
 #include <limits>
+#include <cmath>
 
 #include "TestFunction.h"
-
-constexpr double pi = 3.141592653589793;
 
 Tractriss* TestClass::tractriss{ nullptr };
 
@@ -21,9 +20,9 @@ double TestClass::setPositiveValue() {
     std::uniform_real_distribution<> rd(0, std::numeric_limits<double>::max());
 
     double expectEqual{ rd(mersenne) };
-    tractriss->setDistance(expectEqual);
-
-    return expectEqual;
+    tractriss->setDistance(std::pow(expectEqual, static_cast<double>(1 / 3)));
+    
+    return std::pow(expectEqual, static_cast<double>(1 / 3));
 }
 
 double TestClass::setNegativeValue() {
@@ -59,22 +58,9 @@ double TestClass::setOutOfRange() {
     return tractriss->getRadius(phi);
 }
 
-double TestClass::setInRange() {
-    double phi{ angleInRange() };
-
-    return tractriss->getRadius(phi);
-}
-
 double TestClass:: setOutRangeTwoAngles() {
     double phi_1{ angleOutRange() };
     double phi_2{ angleOutRange() };
-
-    return tractriss->getDougieLength(phi_1, phi_2);
-}
-
-double TestClass::setInRangeTwoAngles() {
-    double phi_1{ angleInRange() };
-    double phi_2{ phi_1 + 1e-8 };
 
     return tractriss->getDougieLength(phi_1, phi_2);
 }
@@ -86,15 +72,18 @@ double TestClass::secondSmallerFirst() {
     return tractriss->getDougieLength(phi_1, phi_2);
 }
 
-CodeErrors TestClass::testCoordinatesOut() {
+Point TestClass::testCoordinatesOut() {
     double phi{ angleOutRange() };
 
-    return tractriss->getCoordinates(phi, Point());
+    return tractriss->getCoordinates(phi);
 }
 
-CodeErrors TestClass::testCoordinatesIn() {
-    double phi{ angleInRange() };
+Point TestClass::calcCoordinates(double phi) noexcept {
+    Point point;
 
-    return tractriss->getCoordinates(phi, Point());
+    point.x = tractriss->getDistance() * (log(tan(phi / 2)) + cos(phi));
+    point.y = tractriss->getDistance() * abs(sin(phi));
+
+    return point;
 }
 
