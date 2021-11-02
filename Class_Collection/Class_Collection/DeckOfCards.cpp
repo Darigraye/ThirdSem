@@ -79,7 +79,7 @@ DeckOfCards::DeckOfCards() noexcept {
 	m_init = ModeInitDeck::FULL_INIT;
 }
 
-DeckOfCards::DeckOfCards(int number) {
+DeckOfCards::DeckOfCards(const int number) {
 	if (number > 52 || number < 0) {
 		throw Exception("Number out of range (number must be > -1 and < 53\n");
 	}
